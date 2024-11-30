@@ -1,0 +1,19 @@
+{
+  "name": "convert229",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "index.mjs",
+  "scripts": {
+    "dev": "node index.mjs",
+    "start": "node index.mjs"
+  },
+  "keywords": [],
+  "author": "lasroun",
+  "license": "ISC",
+  "dependencies": {
+    "csv-parser": "^3.0.0",
+    "json2csv": "^6.0.0-alpha.2",
+    "nodemon": "^3.1.7"
+  }
+}
