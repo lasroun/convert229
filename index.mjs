@@ -1,8 +1,30 @@
+import fs from "fs";
 import csv2json from "./utils/csv2json.mjs";
 import json2csv from "./utils/json2csv.mjs";
 
+const createFolder = (path) => {
+  if (!fs.existsSync(path)) {
+    fs.mkdirSync(path);
+  }
+};
+
 const main = async () => {
-  const data = await csv2json("csv/contacts.csv");
+  createFolder("output");
+  createFolder("csv");
+
+  const csvPath = "csv/contacts.csv";
+
+  if (!fs.existsSync(csvPath)) {
+    console.log(`Fichier manquant : ${csvPath}. Le script est annulé.`);
+    return;
+  }
+
+  if (data.length === 0) {
+    console.log("Le fichier CSV est vide. Le script est annulé.");
+    return;
+  }
+  
+  const data = await csv2json(csvPath);
   console.log("Nombre de contacts initiaux " + data.length);
   // const allKeys = [...new Set(data.flatMap(Object.keys))];
   // console.log(allKeys.length);
@@ -47,29 +69,31 @@ const main = async () => {
   const manageContacts = (contacts, NameKeys, phoneKeys) => {
     const duplicateAndAddPrefix = (contacts) => {
       const updatedContacts = [];
-  
+
       contacts.forEach((contact) => {
-        const firstNameKey = NameKeys.find((key) => contact[key]?.trim() !== "");
-  
+        const firstNameKey = NameKeys.find(
+          (key) => contact[key]?.trim() !== ""
+        );
+
         if (firstNameKey) {
           const oldContact = { ...contact };
           oldContact[firstNameKey] = `old ${contact[firstNameKey]}`;
-  
+
           updatedContacts.push(contact, oldContact);
         } else {
           updatedContacts.push(contact);
         }
       });
-  
+
       return updatedContacts;
     };
-  
+
     const addBeninPrefix = (contacts) => {
       contacts.forEach((contact) => {
         const isOldContact = NameKeys.some((key) =>
           contact[key]?.trim().startsWith("old ")
         );
-  
+
         if (!isOldContact) {
           phoneKeys.forEach((key) => {
             if (contact[key]) {
@@ -85,34 +109,34 @@ const main = async () => {
           });
         }
       });
-  
+
       return contacts;
     };
-  
+
     const duplicatedContacts = duplicateAndAddPrefix(contacts);
     return addBeninPrefix(duplicatedContacts);
   };
-  
+
   const finalContacts = manageContacts(realContacts, NameKeys, phoneKeys);
   console.log("Nombre de contacts finaux " + finalContacts.length);
   const cleanData = (contacts) => {
     return contacts.map((contact) => {
       const cleanedContact = { ...contact };
-  
+
       phoneKeys.forEach((key) => {
         if (cleanedContact[key]) {
           cleanedContact[key] = Array.isArray(cleanedContact[key])
-            ? cleanedContact[key].join(" ::: ") 
+            ? cleanedContact[key].join(" ::: ")
             : cleanedContact[key];
         }
       });
-  
+
       return cleanedContact;
     });
   };
 
   const cleanedContacts = cleanData(finalContacts);
-  
+
   json2csv(cleanedContacts, "output/contacts.csv");
 };
 
