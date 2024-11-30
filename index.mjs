@@ -19,12 +19,11 @@ const main = async () => {
     return;
   }
 
+  const data = await csv2json(csvPath);
   if (data.length === 0) {
     console.log("Le fichier CSV est vide. Le script est annulé.");
     return;
   }
-  
-  const data = await csv2json(csvPath);
   console.log("Nombre de contacts initiaux " + data.length);
   // const allKeys = [...new Set(data.flatMap(Object.keys))];
   // console.log(allKeys.length);
@@ -119,6 +118,33 @@ const main = async () => {
 
   const finalContacts = manageContacts(realContacts, NameKeys, phoneKeys);
   console.log("Nombre de contacts finaux " + finalContacts.length);
+
+  const addLocalNumberVariations = (contacts, phoneKeys) => {
+    contacts.forEach((contact) => {
+      phoneKeys.forEach((key) => {
+        if (contact[key]) {
+          const originalNumbers = Array.isArray(contact[key]) ? contact[key] : [];
+          const numbersWithLocalVariations = originalNumbers.flatMap((num) => {
+            if (num.startsWith("+22901")) {
+              return [num, num.replace("+229", "")];
+            }
+            return num;
+          });
+  
+          contact[key] = [...new Set(numbersWithLocalVariations)];
+        }
+      });
+    });
+  
+    return contacts;
+  };
+  
+  const finalContactswithVariations = addLocalNumberVariations(
+    finalContacts,
+    phoneKeys
+  );
+  console.log("Contacts finaux avec variations locales ajoutées");
+  
   const cleanData = (contacts) => {
     return contacts.map((contact) => {
       const cleanedContact = { ...contact };
@@ -135,7 +161,7 @@ const main = async () => {
     });
   };
 
-  const cleanedContacts = cleanData(finalContacts);
+  const cleanedContacts = cleanData(finalContactswithVariations);
 
   json2csv(cleanedContacts, "output/contacts.csv");
 };
