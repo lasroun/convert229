@@ -38,7 +38,7 @@ Placez votre fichier CSV dans le dossier `csv/`. Assurez-vous que le fichier se 
 Exécutez le script avec la commande suivante :
 
 ```bash
-npm run dev
+npm run start
 ```
 
 Le script :
@@ -82,5 +82,17 @@ old Jane,0195301784,+2290199006977
 2. **Structure des fichiers** :
    - Assurez-vous que votre fichier source CSV contient bien les colonnes nécessaires (`First Name`, `Phone 1 - Value`, etc.).
    - Si votre fichier CSV est mal formaté, le script risque de ne pas fonctionner correctement.
+
+3. **Exécutez le script avec la commande suivante** :
+
+```bash
+npm run clean
+```
+
+- Le script :
+1. Lira les contacts depuis le fichier `csv/contacts.csv`.
+2. Effacera les vieux contacts avec la mention "old".
+3. Générera un nouveau fichier CSV dans le dossier `output/`.
+
 
 ---

@@ -15,7 +15,12 @@ const NameKeys = [
 const phoneKeys = ["Phone 1 - Value", "Phone 2 - Value", "Phone 3 - Value"];
 
 const main = async () => {
-  const data = await utils.csv2json("csv/contacts.csv");
+  const csvPath = "csv/contacts.csv";
+  if (!fs.existsSync(csvPath)) {
+    console.log(`Fichier manquant : ${csvPath}. Le script est annulé.`);
+    return;
+  }
+  const data = await utils.csv2json(csvPath);
   if (data.length === 0) {
     console.log("Le fichier CSV est vide. Le script est annulé.");
     return;
