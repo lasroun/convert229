@@ -53,7 +53,11 @@ const addBeninPrefix = (contacts, NameKeys, phoneKeys) => {
         if (contact[key]) {
           contact[key] = contact[key].map((num) => {
             if (num.startsWith("+229")) {
-              return `+22901${num.slice(4)}`;
+              if (num.slice(4, 6) === "01") {
+                return num;
+              } else {
+                return `+22901${num.slice(4)}`;
+              }
             } else if (num.length === 8) {
               return `01${num}`;
             }
