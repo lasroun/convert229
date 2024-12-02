@@ -7,7 +7,7 @@ const json2csv = (data, outputPath) => {
     const csv = parser.parse(data);
 
     fs.writeFileSync(outputPath, csv, "utf-8");
-    console.log(`Fichier CSV généré avec succès : ${outputPath}`);
+    console.log(`Fichier CSV généré avec succès`);
   } catch (err) {
     console.error("Erreur lors de la conversion JSON → CSV :", err);
   }
